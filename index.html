@@ -346,21 +346,31 @@ Another paragraph here.
             line-height: 1.3em;
         }
         
-        /* Purple gradient border via ::before ring (top -> bottom) */
+        /* Card-style bullet list container with gradient background and dark inner containers */
         .bullet-list-container {
-            --radius: 18px;  /* base corner radius */
+            --radius: 25px;  /* base corner radius */
             --ring-w: 2.5px;   /* gradient ring thickness */
             --base-bw: 1px;  /* base border width */
             position: relative;
             box-sizing: border-box;
             border-radius: var(--radius);
             /* thin grey wrapper line that remains visible */
-            border: var(--base-bw) solid rgba(255, 255, 255, 0.14);
+            border: var(--base-bw) solid rgba(31, 31, 31, 1);
             padding: 30px;
             margin: 15px 0;
-            background-color: transparent;
+            /* Radial gradient background matching card component */
+            background-image: radial-gradient(at top left, #1F1F1F 0%, #0E0E0E 50%);
             overflow: visible;
             z-index: 0;
+        }
+
+        /* Individual bullet list items with solid dark backgrounds matching bulletlist.html */
+        .bullet-list-container .elementor-icon-list-item {
+            background-color: #000000;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
     .bullet-list-container::before {
@@ -409,18 +419,19 @@ Another paragraph here.
             font-family: var(--e-global-typography-text-font-family), Sans-serif;
         }
         
-        /* Table container with thin grey wrapper + outer gradient ring */
+        /* Table container with gradient background matching bullet/numbered lists */
         .table-container {
-            --radius: 18px;
-            --ring-w: 2px;
+            --radius: 25px;
+            --ring-w: 2.5px;
             --base-bw: 1px;
             position: relative;
             box-sizing: border-box;
             border-radius: var(--radius);
-            border: var(--base-bw) solid rgba(255, 255, 255, 0.14);
+            border: var(--base-bw) solid rgba(31, 31, 31, 1);
             padding: 30px;
             margin: 15px 0;
-            background-color: transparent;
+            /* Radial gradient background matching card component */
+            background-image: radial-gradient(at top left, #1F1F1F 0%, #0E0E0E 50%);
             overflow: visible;
             z-index: 0;
         }
@@ -476,20 +487,30 @@ Another paragraph here.
             border-bottom: none;
         }
         
-        /* Numbered list container with thin grey wrapper + outer gradient ring */
+        /* Card-style numbered list container with gradient background and dark inner containers */
         .numbered-list-container {
-            --radius: 18px;
-            --ring-w: 2px;
+            --radius: 25px;
+            --ring-w: 2.5px;
             --base-bw: 1px;
             position: relative;
             box-sizing: border-box;
             border-radius: var(--radius);
-            border: var(--base-bw) solid rgba(255, 255, 255, 0.14);
+            border: var(--base-bw) solid rgba(31, 31, 31, 1);
             padding: 30px;
             margin: 15px 0;
-            background-color: transparent;
+            /* Radial gradient background matching card component */
+            background-image: radial-gradient(at top left, #1F1F1F 0%, #0E0E0E 50%);
             overflow: visible;
             z-index: 0;
+        }
+
+        /* Individual numbered list items with solid dark backgrounds matching bulletlist.html */
+        .numbered-list-container .elementor-numbered-list-item {
+            background-color: #000000;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .numbered-list-container::before {
