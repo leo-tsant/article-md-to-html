@@ -212,7 +212,12 @@ Another paragraph here.
 
 **Bold text** and *italic text* are supported!
 
-<!-- To change columns: edit the data-columns attribute in the generated HTML from 1 to 2 or 3 -->"></textarea>
+<!-- Configuration options for lists:
+- Columns: edit data-columns="1" to "2" or "3" 
+- Text size: edit style="--text-size: 16px;" to any pixel value (default: 16px)
+Examples: 
+  <div class="bullet-list-container" data-columns="2" style="--text-size: 18px;">
+  <div class="numbered-list-container" data-columns="3" style="--text-size: 12px;"> -->"></textarea>
             </div>
 
             <div class="output-section">
@@ -418,6 +423,12 @@ Another paragraph here.
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Numeric text size configuration for bullet list items */
+        .bullet-list-container .elementor-icon-list-text {
+            font-size: var(--text-size, 16px);
+            line-height: 1.3em;
+        }
+
     .bullet-list-container::before {
         content: "";
         position: absolute;
@@ -575,6 +586,12 @@ Another paragraph here.
             padding: 15px 20px;
             margin-bottom: 0;
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Numeric text size configuration for numbered list items */
+        .numbered-list-container .elementor-numbered-list-text {
+            font-size: var(--text-size, 16px);
+            line-height: 1.3em;
         }
 
         .numbered-list-container::before {
@@ -983,7 +1000,7 @@ Another paragraph here.
                 </li>`
             ).join('\n                ');
             
-            return `<div class="numbered-list-container" data-columns="1">
+            return `<div class="numbered-list-container" data-columns="1" style="--text-size: 16px;">
     <div class="elementor-element elementor-element-${id} elementor-widget elementor-widget-text-editor" data-id="${id}" data-element_type="widget" data-widget_type="text-editor.default">
         <div class="elementor-widget-container">
             <ol class="elementor-numbered-list">
@@ -1006,7 +1023,7 @@ Another paragraph here.
                 </li>`
             ).join('\n                ');
             
-            return `<div class="bullet-list-container" data-columns="1">
+            return `<div class="bullet-list-container" data-columns="1" style="--text-size: 16px;">
     <div class="elementor-element elementor-element-${id} elementor-align-left elementor-icon-list--layout-traditional elementor-widget elementor-widget-icon-list" data-id="${id}" data-element_type="widget" data-widget_type="icon-list.default">
         <ul class="elementor-icon-list-items">
             ${listItems}
