@@ -346,14 +346,55 @@ Another paragraph here.
             line-height: 1.3em;
         }
         
-        /* Purple container styling for bullet list */
+        /* Purple gradient border via ::before ring (top -> bottom) */
         .bullet-list-container {
-            border: 1px solid;
-            border-image: linear-gradient(135deg, #753EF7, #A855F7, #8B5CF6, #7C3AED, #6D28D9) 1;
-            border-radius: 25px;
+            --radius: 18px;  /* base corner radius */
+            --ring-w: 2.5px;   /* gradient ring thickness */
+            --base-bw: 1px;  /* base border width */
+            position: relative;
+            box-sizing: border-box;
+            border-radius: var(--radius);
+            /* thin grey wrapper line that remains visible */
+            border: var(--base-bw) solid rgba(255, 255, 255, 0.14);
             padding: 30px;
             margin: 15px 0;
-            background: transparent;
+            background-color: transparent;
+            overflow: visible;
+            z-index: 0;
+        }
+
+    .bullet-list-container::before {
+        content: "";
+        position: absolute;
+        /* place the gradient ring outside the base border */
+        inset: calc(-1 * var(--ring-w));
+        padding: var(--ring-w);
+        border-radius: calc(var(--radius) + var(--ring-w));
+        display: block;
+        /* Softer purple that fades earlier, matching TOC */
+        background: linear-gradient(
+        to bottom,
+        rgba(117, 62, 247, 0.60) 0%,
+        rgba(168, 85, 247, 0.40) 16%,
+        rgba(168, 85, 247, 0.20) 32%,
+        rgba(168, 85, 247, 0.00) 55%
+        );
+        /* Mask the center so only the ring shows */
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        /* be above the thin base border but not capture events */
+        z-index: 1;
+        pointer-events: none;
+    }
+
+        /* Fallback for browsers without mask-composite: keep subtle wrapper line only */
+        @supports not (mask-composite: exclude) {
+            .bullet-list-container::before,
+            .table-container::before,
+            .numbered-list-container::before { content: none; }
+            /* borders defined on the containers remain as the visible wrappers */
         }
         
         /* Blockquote styling */
@@ -368,16 +409,42 @@ Another paragraph here.
             font-family: var(--e-global-typography-text-font-family), Sans-serif;
         }
         
-        /* Purple container styling for table */
+        /* Table container with thin grey wrapper + outer gradient ring */
         .table-container {
-            border-style: solid;
-            border-width: 1px 1px 1px 1px;
-            border-color: var(--e-global-color-bcf4dba);
-            border-radius: 25px 25px 25px 25px;
+            --radius: 18px;
+            --ring-w: 2px;
+            --base-bw: 1px;
+            position: relative;
+            box-sizing: border-box;
+            border-radius: var(--radius);
+            border: var(--base-bw) solid rgba(255, 255, 255, 0.14);
             padding: 30px;
             margin: 15px 0;
             background-color: transparent;
-            background-image: radial-gradient(at top left, var(--e-global-color-bcf4dba) 0%, var(--e-global-color-147d839) 50%);
+            overflow: visible;
+            z-index: 0;
+        }
+
+        .table-container::before {
+            content: "";
+            position: absolute;
+            inset: calc(-1 * var(--ring-w));
+            padding: var(--ring-w);
+            border-radius: calc(var(--radius) + var(--ring-w));
+            display: block;
+            background: linear-gradient(
+                to bottom,
+                rgba(117, 62, 247, 0.60) 0%,
+                rgba(168, 85, 247, 0.40) 16%,
+                rgba(168, 85, 247, 0.20) 32%,
+                rgba(168, 85, 247, 0.00) 55%
+            );
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+                    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            z-index: 1;
+            pointer-events: none;
         }
         
         .elementor-table {
@@ -409,16 +476,42 @@ Another paragraph here.
             border-bottom: none;
         }
         
-        /* Purple container styling for numbered list */
+        /* Numbered list container with thin grey wrapper + outer gradient ring */
         .numbered-list-container {
-            border-style: solid;
-            border-width: 1px 1px 1px 1px;
-            border-color: var(--e-global-color-bcf4dba);
-            border-radius: 25px 25px 25px 25px;
+            --radius: 18px;
+            --ring-w: 2px;
+            --base-bw: 1px;
+            position: relative;
+            box-sizing: border-box;
+            border-radius: var(--radius);
+            border: var(--base-bw) solid rgba(255, 255, 255, 0.14);
             padding: 30px;
             margin: 15px 0;
             background-color: transparent;
-            background-image: radial-gradient(at top left, var(--e-global-color-bcf4dba) 0%, var(--e-global-color-147d839) 50%);
+            overflow: visible;
+            z-index: 0;
+        }
+
+        .numbered-list-container::before {
+            content: "";
+            position: absolute;
+            inset: calc(-1 * var(--ring-w));
+            padding: var(--ring-w);
+            border-radius: calc(var(--radius) + var(--ring-w));
+            display: block;
+            background: linear-gradient(
+                to bottom,
+                rgba(117, 62, 247, 0.60) 0%,
+                rgba(168, 85, 247, 0.40) 16%,
+                rgba(168, 85, 247, 0.20) 32%,
+                rgba(168, 85, 247, 0.00) 55%
+            );
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+                    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            z-index: 1;
+            pointer-events: none;
         }
         
         .elementor-numbered-list {
