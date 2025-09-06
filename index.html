@@ -126,6 +126,7 @@
         }
 
 
+        /* Responsive column layouts - stack columns on smaller screens */
         @media (max-width: 768px) {
             .converter-grid {
                 grid-template-columns: 1fr;
@@ -133,6 +134,23 @@
             
             .header h1 {
                 font-size: 2rem;
+            }
+
+            /* On tablets and smaller, reduce 3-column to 2-column */
+            .bullet-list-container[data-columns="3"] .elementor-icon-list-items,
+            .numbered-list-container[data-columns="3"] .elementor-numbered-list {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* On phones, force all lists to single column */
+            .bullet-list-container[data-columns="2"] .elementor-icon-list-items,
+            .bullet-list-container[data-columns="3"] .elementor-icon-list-items,
+            .numbered-list-container[data-columns="2"] .elementor-numbered-list,
+            .numbered-list-container[data-columns="3"] .elementor-numbered-list {
+                grid-template-columns: 1fr;
+                gap: 10px;
             }
         }
     </style>
@@ -172,10 +190,16 @@ Another paragraph here.
 - Bullet point one with **bold text**
 - Bullet point two with *italic text*
 - Bullet point three
+- Bullet point four
+- Bullet point five
+- Bullet point six
 
 1. Numbered list item one
 2. Numbered list item two
 3. Numbered list item three
+4. Numbered list item four
+5. Numbered list item five
+6. Numbered list item six
 
 | Header 1 | Header 2 | Header 3 |
 |----------|----------|----------|
@@ -186,7 +210,9 @@ Another paragraph here.
 [Jump to Main Heading](#main-heading-h1)
 [External Link](https://example.com)
 
-**Bold text** and *italic text* are supported!"></textarea>
+**Bold text** and *italic text* are supported!
+
+<!-- To change columns: edit the data-columns attribute in the generated HTML from 1 to 2 or 3 -->"></textarea>
             </div>
 
             <div class="output-section">
@@ -364,12 +390,31 @@ Another paragraph here.
             z-index: 0;
         }
 
+        /* Column layout support for bullet lists */
+        .bullet-list-container[data-columns="1"] .elementor-icon-list-items {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .bullet-list-container[data-columns="2"] .elementor-icon-list-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 20px;
+        }
+
+        .bullet-list-container[data-columns="3"] .elementor-icon-list-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px 20px;
+        }
+
         /* Individual bullet list items with solid dark backgrounds matching bulletlist.html */
         .bullet-list-container .elementor-icon-list-item {
             background-color: #000000;
             border-radius: 12px;
             padding: 15px 20px;
-            margin-bottom: 10px;
+            margin-bottom: 0;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -504,12 +549,31 @@ Another paragraph here.
             z-index: 0;
         }
 
+        /* Column layout support for numbered lists */
+        .numbered-list-container[data-columns="1"] .elementor-numbered-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .numbered-list-container[data-columns="2"] .elementor-numbered-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 20px;
+        }
+
+        .numbered-list-container[data-columns="3"] .elementor-numbered-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px 20px;
+        }
+
         /* Individual numbered list items with solid dark backgrounds matching bulletlist.html */
         .numbered-list-container .elementor-numbered-list-item {
             background-color: #000000;
             border-radius: 12px;
             padding: 15px 20px;
-            margin-bottom: 10px;
+            margin-bottom: 0;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -919,7 +983,7 @@ Another paragraph here.
                 </li>`
             ).join('\n                ');
             
-            return `<div class="numbered-list-container">
+            return `<div class="numbered-list-container" data-columns="1">
     <div class="elementor-element elementor-element-${id} elementor-widget elementor-widget-text-editor" data-id="${id}" data-element_type="widget" data-widget_type="text-editor.default">
         <div class="elementor-widget-container">
             <ol class="elementor-numbered-list">
@@ -942,7 +1006,7 @@ Another paragraph here.
                 </li>`
             ).join('\n                ');
             
-            return `<div class="bullet-list-container">
+            return `<div class="bullet-list-container" data-columns="1">
     <div class="elementor-element elementor-element-${id} elementor-align-left elementor-icon-list--layout-traditional elementor-widget elementor-widget-icon-list" data-id="${id}" data-element_type="widget" data-widget_type="icon-list.default">
         <ul class="elementor-icon-list-items">
             ${listItems}
