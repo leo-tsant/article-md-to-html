@@ -299,6 +299,28 @@ Paste or type your content here.
                 </div>
             </div>
 
+            <!-- Image URL Options -->
+            <div style="margin-top: 12px; margin-bottom: 8px;">
+                <label style="display: flex; align-items: center; color: #CCCCCC; font-size: 14px; cursor: pointer;">
+                    <input 
+                        type="checkbox" 
+                        id="includeBaseImageUrl" 
+                        onchange="toggleBaseImageUrlField()"
+                        style="margin-right: 8px;"
+                    />
+                    Include base image URL for images
+                </label>
+                <div id="baseImageUrlContainer" style="display: none; margin-top: 8px; margin-left: 24px;">
+                    <input 
+                        type="text" 
+                        id="baseImageUrl" 
+                        placeholder="https://yourdomain.com/wp-content/uploads/notion-images/"
+                        style="width: calc(100% - 24px); padding: 8px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid #333; border-radius: 6px; color: #CCCCCC; font-size: 14px;"
+                    />
+                    <div style="font-size: 12px; color: #8B8B8B; margin-top: 4px;">Images in your markdown will be prefixed with this URL</div>
+                </div>
+            </div>
+
             <!-- Convert button placed outside and just below the input container -->
             <div class="buttons" id="inputButtons" style="justify-content: flex-end; margin-top:12px;">
                 <button class="btn btn-primary" onclick="convertToElementorHTML()">Convert to Elementor HTML</button>
@@ -1955,6 +1977,19 @@ Paste or type your content here.
             return `<style>\n        ${cssRules.join('\n\n        ')}\n        </style>`;
         }
 
+        function toggleBaseImageUrlField() {
+            const checkbox = document.getElementById('includeBaseImageUrl');
+            const container = document.getElementById('baseImageUrlContainer');
+            
+            if (checkbox.checked) {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+                // Clear the input when hiding
+                document.getElementById('baseImageUrl').value = '';
+            }
+        }
+
         function convertToElementorHTML() {
             const markdownInput = document.getElementById('markdownInput').value;
             const htmlOutput = document.getElementById('htmlOutput');
@@ -2030,6 +2065,32 @@ Paste or type your content here.
             
             // Parse italic text (*text*)
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Parse images ![alt](src) - handle before links to avoid conflicts
+            text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, src) {
+                const includeBaseUrl = document.getElementById('includeBaseImageUrl').checked;
+                const baseImageUrl = document.getElementById('baseImageUrl').value.trim();
+                let cleanSrc = src;
+                
+                // Remove Notion attachment prefix (attachment:uuid:filename.ext -> filename.ext)
+                cleanSrc = cleanSrc.replace(/^attachment:[a-f0-9-]+:/, '');
+                
+                // Extract just the filename from any path (remove folder structure)
+                if (cleanSrc.includes('/')) {
+                    cleanSrc = cleanSrc.split('/').pop();
+                }
+                
+                let fullUrl = cleanSrc;
+                
+                // Only prefix if checkbox is checked, base URL is provided, and src doesn't already start with http/https
+                if (includeBaseUrl && baseImageUrl && !cleanSrc.match(/^https?:\/\//)) {
+                    // Ensure baseImageUrl ends with / if it doesn't already
+                    const prefix = baseImageUrl.endsWith('/') ? baseImageUrl : baseImageUrl + '/';
+                    fullUrl = prefix + cleanSrc;
+                }
+                
+                return '<img src="' + fullUrl + '" alt="' + alt + '" style="max-width: 100%; height: auto;">';
+            });
             
             // Parse internal links for table of contents [text](#anchor)
             text = text.replace(/\[([^\]]+)\]\(#([^)]+)\)/g, '<a href="#$2">$1</a>');
