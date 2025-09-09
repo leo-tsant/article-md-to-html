@@ -93,6 +93,17 @@
             overflow: visible;
             min-width: 0; /* allow grid children to shrink without expanding column */
         }
+
+        .outputs-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .output-half {
+            min-width: 0; /* allow content to shrink */
+        }
         .input-section::before, .output-section::before {
             content: "";
             position: absolute;
@@ -223,9 +234,13 @@
 
 
         /* Responsive column layouts - stack columns on smaller screens */
-        @media (max-width: 900px) { .converter-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { 
+            .converter-grid { grid-template-columns: 1fr; }
+            .outputs-container { grid-template-columns: 1fr; } /* Stack outputs vertically on smaller screens */
+        }
         @media (max-width: 768px) {
             .converter-grid { grid-template-columns: 1fr; }
+            .outputs-container { grid-template-columns: 1fr; }
             .header h1 { font-size: 1.6rem; }
             /* On tablets and smaller, reduce 3-column to 2-column */
             .bullet-list-container[data-columns="3"] .elementor-icon-list-items,
@@ -289,15 +304,24 @@ Paste or type your content here.
                 <button class="btn btn-primary" onclick="convertToElementorHTML()">Convert to Elementor HTML</button>
             </div>
 
-            <div class="output-section" id="outputSection" style="display:none;">
-                <h2 class="section-title">Elementor HTML Output</h2>
-                <div id="htmlOutput" class="output-html"></div>
+            <div class="outputs-container" id="outputsContainer" style="display:none;">
+                <div class="output-section output-half" id="htmlSection">
+                    <h2 class="section-title">HTML Output</h2>
+                    <div id="htmlOutput" class="output-html"></div>
+                </div>
+
+                <div class="output-section output-half" id="cssSection">
+                    <h2 class="section-title">CSS Output</h2>
+                    <div id="cssOutput" class="output-html"></div>
+                </div>
             </div>
 
             <!-- Reset and Copy buttons placed outside and just below the output container -->
             <div class="buttons" id="outputButtons" style="justify-content: flex-end; margin-top:12px; display:none;">
                 <button id="resetBtn" class="btn btn-danger" style="display:none" onclick="resetOutput()">Reset</button>
                 <button class="btn btn-secondary" onclick="copyHTML(this)">Copy HTML</button>
+                <button class="btn btn-secondary" onclick="copyCSS(this)">Copy CSS</button>
+                <button class="btn btn-primary" onclick="copyBoth(this)">Copy Both</button>
             </div>
         </div>
 
@@ -590,6 +614,13 @@ Paste or type your content here.
             border: none;
             border-radius: 0;
             overflow: hidden;
+            min-width: 600px; /* Ensure table has minimum width for readability */
+        }
+        
+        /* Responsive table wrapper for horizontal scrolling on mobile */
+        .table-container .elementor-widget-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
         
         .elementor-table th,
@@ -609,6 +640,49 @@ Paste or type your content here.
         
         .elementor-table tr:last-child td {
             border-bottom: none;
+        }
+        
+        /* Mobile responsive improvements for tables */
+        @media (max-width: 768px) {
+            .table-container .elementor-widget-container {
+                /* Add subtle scroll indicator shadow */
+                background: 
+                    linear-gradient(90deg, rgba(0,0,0,0.3) 0%, transparent 20%), 
+                    linear-gradient(270deg, rgba(0,0,0,0.3) 0%, transparent 20%);
+                background-attachment: local, local;
+                background-size: 20px 100%, 20px 100%;
+                background-position: 0 0, 100% 0;
+                background-repeat: no-repeat;
+            }
+            
+            .elementor-table {
+                min-width: 500px; /* Slightly smaller minimum width on mobile */
+            }
+            
+            .elementor-table th,
+            .elementor-table td {
+                padding: 10px 12px; /* Reduce padding on mobile for better fit */
+                white-space: nowrap; /* Prevent text wrapping that could make tables too tall */
+            }
+            
+            .elementor-table th {
+                font-size: 14px; /* Slightly smaller header text on mobile */
+            }
+            
+            .elementor-table td {
+                font-size: 13px; /* Slightly smaller body text on mobile */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .elementor-table {
+                min-width: 400px; /* Even smaller minimum width on very small screens */
+            }
+            
+            .elementor-table th,
+            .elementor-table td {
+                padding: 8px 10px; /* Further reduce padding on very small screens */
+            }
         }
         
         /* Card-style numbered list container with gradient background and dark inner containers */
@@ -748,6 +822,8 @@ Paste or type your content here.
             line-height: 1.6;
             white-space: pre;
             font-size: 14px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         
         .directory-tree .folder {
@@ -762,6 +838,36 @@ Paste or type your content here.
         .directory-tree .comment {
             color: #90EE90;
             font-style: italic;
+        }
+        
+        /* Mobile responsive improvements for directory trees */
+        @media (max-width: 768px) {
+            .directory-tree-container {
+                padding: 15px; /* Reduce padding on mobile */
+            }
+            
+            .directory-tree {
+                font-size: 12px; /* Smaller font on mobile for better fit */
+                /* Add subtle scroll indicator shadow */
+                background: 
+                    linear-gradient(90deg, rgba(0,0,0,0.4) 0%, transparent 15%), 
+                    linear-gradient(270deg, rgba(0,0,0,0.4) 0%, transparent 15%);
+                background-attachment: local, local;
+                background-size: 15px 100%, 15px 100%;
+                background-position: 0 0, 100% 0;
+                background-repeat: no-repeat;
+                padding-right: 10px; /* Add some padding for scroll indicator */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .directory-tree-container {
+                padding: 12px; /* Even less padding on very small screens */
+            }
+            
+            .directory-tree {
+                font-size: 11px; /* Even smaller font on very small screens */
+            }
         }
         
         /* Code block styling */
@@ -816,6 +922,12 @@ Paste or type your content here.
         // H1 with gradient styling
         function createH1Element(text) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-heading');
+            usedClasses.add('elementor-heading-title');
+            
             // Check for custom anchor {#custom-id}
             const anchorMatch = text.match(/^(.*?)\s*\{#([^}]+)\}$/);
             let displayText, anchorId;
@@ -836,6 +948,11 @@ Paste or type your content here.
         // H2 with same gradient styling as H1
         function createH2Element(text) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-heading');
+            usedClasses.add('elementor-heading-title');
             // Check for custom anchor {#custom-id}
             const anchorMatch = text.match(/^(.*?)\s*\{#([^}]+)\}$/);
             let displayText, anchorId;
@@ -856,6 +973,11 @@ Paste or type your content here.
         // H3 with same gradient styling as H1
         function createH3Element(text) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-heading');
+            usedClasses.add('elementor-heading-title');
             // Check for custom anchor {#custom-id}
             const anchorMatch = text.match(/^(.*?)\s*\{#([^}]+)\}$/);
             let displayText, anchorId;
@@ -876,6 +998,11 @@ Paste or type your content here.
         // H4 with same gradient styling as H1
         function createH4Element(text) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-heading');
+            usedClasses.add('elementor-heading-title');
             // Check for custom anchor {#custom-id}
             const anchorMatch = text.match(/^(.*?)\s*\{#([^}]+)\}$/);
             let displayText, anchorId;
@@ -896,6 +1023,11 @@ Paste or type your content here.
         // H5 with same gradient styling as H1
         function createH5Element(text) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-heading');
+            usedClasses.add('elementor-heading-title');
             // Check for custom anchor {#custom-id}
             const anchorMatch = text.match(/^(.*?)\s*\{#([^}]+)\}$/);
             let displayText, anchorId;
@@ -916,6 +1048,11 @@ Paste or type your content here.
         // H6 with same gradient styling as H1
         function createH6Element(text) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-heading');
+            usedClasses.add('elementor-heading-title');
             // Check for custom anchor {#custom-id}
             const anchorMatch = text.match(/^(.*?)\s*\{#([^}]+)\}$/);
             let displayText, anchorId;
@@ -936,6 +1073,11 @@ Paste or type your content here.
         // Paragraph structure
         function createParagraphElement(text) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-text-editor');
+            usedClasses.add('elementor-text-editor');
             return `<div class="elementor-element elementor-element-${id} elementor-widget elementor-widget-text-editor" data-id="${id}" data-element_type="widget" data-widget_type="text-editor.default">
     <div class="elementor-widget-container">
         <p class="elementor-text-editor">${text}</p>
@@ -946,6 +1088,11 @@ Paste or type your content here.
         // Blockquote structure
         function createBlockquoteElement(text) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-text-editor');
+            usedClasses.add('elementor-blockquote');
             return `<div class="elementor-element elementor-element-${id} elementor-widget elementor-widget-text-editor" data-id="${id}" data-element_type="widget" data-widget_type="text-editor.default">
     <div class="elementor-widget-container">
         <blockquote class="elementor-blockquote">${parseInlineMarkdown(text)}</blockquote>
@@ -953,9 +1100,36 @@ Paste or type your content here.
 </div>`;
         }
 
+        // Aside structure with custom styling
+        function createAsideElement(content) {
+            const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('aside-container');
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-text-editor');
+            
+            // Parse the content inside the aside as markdown
+            const parsedContent = parseMarkdownToElementor(content);
+            
+            return `<div class="aside-container">
+    <div class="elementor-element elementor-element-${id} elementor-widget elementor-widget-text-editor" data-id="${id}" data-element_type="widget" data-widget_type="text-editor.default">
+        <div class="elementor-widget-container">
+            ${parsedContent}
+        </div>
+    </div>
+</div>`;
+        }
+
         // Table structure
         function createTableElement(rows) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('table-container');
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-text-editor');
+            usedClasses.add('elementor-table');
             const tableRows = rows.map((row, index) => {
                 const cells = row.map(cell => {
                     const tag = index === 0 ? 'th' : 'td';
@@ -978,6 +1152,11 @@ Paste or type your content here.
         // Horizontal rule structure
         function createHorizontalRuleElement() {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-divider');
+            usedClasses.add('elementor-divider');
             return `<div class="elementor-element elementor-element-${id} elementor-widget elementor-widget-divider" data-id="${id}" data-element_type="widget" data-widget_type="divider.default">
     <div class="elementor-widget-container">
         <hr class="elementor-divider">
@@ -988,6 +1167,12 @@ Paste or type your content here.
         // Directory tree structure
         function createDirectoryTreeElement(treeContent) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('directory-tree-container');
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-text-editor');
+            usedClasses.add('directory-tree');
             
             // Parse and format the directory tree
             const formattedTree = formatDirectoryTree(treeContent);
@@ -1031,6 +1216,13 @@ Paste or type your content here.
         // Code block structure
         function createCodeBlockElement(language, content) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('code-block-container');
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-text-editor');
+            usedClasses.add('code-block-header');
+            usedClasses.add('code-block-content');
             
             // Check if the content is a directory tree structure
             const hasTreeChars = content.includes('└') || content.includes('├') || content.includes('│');
@@ -1062,6 +1254,14 @@ Paste or type your content here.
         // Numbered list structure
         function createNumberedListElement(items) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('numbered-list-container');
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-text-editor');
+            usedClasses.add('elementor-numbered-list');
+            usedClasses.add('elementor-numbered-list-item');
+            usedClasses.add('elementor-numbered-list-text');
             const listItems = items.map(item => 
                 `<li class="elementor-numbered-list-item">
                     <span class="elementor-numbered-list-text">${item}</span>
@@ -1082,6 +1282,17 @@ Paste or type your content here.
         // List structure with check-circle icons (non-clickable)
         function createListElement(items) {
             const id = generateElementorId();
+            // Track used classes
+            usedClasses.add('bullet-list-container');
+            usedClasses.add('elementor-element');
+            usedClasses.add('elementor-align-left');
+            usedClasses.add('elementor-widget');
+            usedClasses.add('elementor-widget-icon-list');
+            usedClasses.add('elementor-icon-list-items');
+            usedClasses.add('elementor-icon-list-item');
+            usedClasses.add('elementor-icon-list-icon');
+            usedClasses.add('elementor-icon-list-text');
+            usedClasses.add('e-font-icon-svg');
             const listItems = items.map(item => 
                 `<li class="elementor-icon-list-item">
                     <span class="elementor-icon-list-icon">
@@ -1100,10 +1311,655 @@ Paste or type your content here.
 </div>`;
         }
 
+        // Track used CSS classes and selectors
+        let usedClasses = new Set();
+        let usedSelectors = new Set();
+
+        // Function to extract necessary CSS rules based on used classes
+        function extractNecessaryCSS() {
+            const cssRules = [];
+            
+            // Always include root variables and reset styles
+            cssRules.push(`:root {
+            --e-global-color-primary: #D1D1D1;
+            --e-global-color-secondary: #040404;
+            --e-global-color-text: #8B8B8B;
+            --e-global-color-accent: #FFFFFF;
+            --e-global-color-e850821: #753EF7;
+            --e-global-color-bcf4dba: #753EF7;
+            --e-global-color-147d839: #5A2DB8;
+            --e-global-typography-primary-font-family: "Plus Jakarta Sans";
+            --e-global-typography-primary-font-weight: 600;
+            --e-global-typography-text-font-family: "Plus Jakarta Sans";
+            --e-global-typography-text-font-weight: 500;
+            --e-global-typography-text-line-height: 1.6em;
+            --e-global-typography-c998942-font-family: "Plus Jakarta Sans";
+            --e-global-typography-c998942-font-weight: 700;
+            --e-global-typography-c998942-line-height: 1.2em;
+            --e-global-typography-be2a21e-font-family: "Plus Jakarta Sans";
+            --e-global-typography-be2a21e-font-weight: 700;
+            --e-global-typography-be2a21e-line-height: 1.2em;
+        }`);
+
+            // Base elementor styles
+            cssRules.push(`.elementor-element {
+            box-sizing: border-box;
+            position: relative;
+            transition: background .3s,border .3s,border-radius .3s,box-shadow .3s,transform .4s;
+        }`);
+
+            cssRules.push(`.elementor-widget {
+            text-align: left;
+        }`);
+
+            // Add specific CSS rules based on used classes
+            if (usedClasses.has('elementor-heading-title')) {
+                cssRules.push(`.elementor-heading-title {
+            font-family: var(--e-global-typography-primary-font-family), Sans-serif;
+            font-weight: var(--e-global-typography-primary-font-weight);
+            background: linear-gradient(90deg, #FFFFFF 0%, transparent 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            max-width: 100%;
+            margin: 0;
+        }`);
+
+                // Add heading-specific styles
+                ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].forEach((tag, index) => {
+                    const sizes = ['56px', '38px', '24px', '20px', '18px', '16px'];
+                    cssRules.push(`.elementor-widget-heading ${tag} {
+            font-size: ${sizes[index]};
+            line-height: 1.2em;
+        }`);
+                });
+            }
+
+            if (usedClasses.has('elementor-text-editor')) {
+                cssRules.push(`.elementor-text-editor {
+            font-family: var(--e-global-typography-text-font-family), Sans-serif;
+            font-weight: var(--e-global-typography-text-font-weight);
+            line-height: var(--e-global-typography-text-line-height);
+            color: #FFFFFF;
+        }`);
+            }
+
+            if (usedClasses.has('elementor-align-left')) {
+                cssRules.push(`.elementor-align-left {
+            text-align: left;
+        }`);
+            }
+
+            // Bullet list styles
+            if (usedClasses.has('bullet-list-container')) {
+                cssRules.push(`/* Bullet List Styles */
+        .bullet-list-container {
+            --radius: 25px;
+            --ring-w: 2.5px;
+            --base-bw: 1px;
+            position: relative;
+            box-sizing: border-box;
+            border-radius: var(--radius);
+            border: var(--base-bw) solid rgba(31, 31, 31, 1);
+            padding: 30px;
+            margin: 15px 0;
+            background-image: radial-gradient(at top left, #1F1F1F 0%, #0E0E0E 50%);
+            overflow: visible;
+            z-index: 0;
+        }
+
+        .bullet-list-container[data-columns="1"] .elementor-icon-list-items {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .bullet-list-container[data-columns="2"] .elementor-icon-list-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 20px;
+        }
+
+        .bullet-list-container[data-columns="3"] .elementor-icon-list-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px 20px;
+        }
+
+        .bullet-list-container .elementor-icon-list-item {
+            background-color: #000000;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .bullet-list-container .elementor-icon-list-text {
+            font-size: var(--text-size, 16px);
+            line-height: 1.3em;
+        }
+
+        .bullet-list-container::before {
+            content: "";
+            position: absolute;
+            inset: calc(-1 * var(--ring-w));
+            padding: var(--ring-w);
+            border-radius: calc(var(--radius) + var(--ring-w));
+            display: block;
+            background: linear-gradient(
+                to bottom,
+                rgba(117, 62, 247, 0.60) 0%,
+                rgba(168, 85, 247, 0.40) 16%,
+                rgba(168, 85, 247, 0.20) 32%,
+                rgba(168, 85, 247, 0.00) 55%
+            );
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+                    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            z-index: 1;
+            pointer-events: none;
+        }`);
+            }
+
+            // Icon list styles
+            if (usedClasses.has('elementor-icon-list-items') || usedClasses.has('elementor-icon-list-item')) {
+                cssRules.push(`/* Icon List Styles */
+        .elementor-icon-list-items {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .elementor-icon-list-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .elementor-icon-list-item a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .elementor-icon-list-icon {
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .elementor-icon-list-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--e-global-color-e850821);
+        }
+
+        .e-font-icon-svg {
+            display: inline-block;
+            font-style: normal;
+            font-variant: normal;
+            text-rendering: auto;
+            line-height: 1;
+        }
+
+        .elementor-icon-list-text {
+            font-family: var(--e-global-typography-text-font-family), Sans-serif;
+            font-weight: var(--e-global-typography-text-font-weight);
+            color: #FFFFFF;
+            font-size: var(--e-global-typography-text-font-size);
+            line-height: 1.3em;
+        }`);
+            }
+
+            // Table styles
+            if (usedClasses.has('table-container') || usedClasses.has('elementor-table')) {
+                cssRules.push(`/* Table Styles */
+        .table-container {
+            --radius: 25px;
+            --ring-w: 2.5px;
+            --base-bw: 1px;
+            position: relative;
+            box-sizing: border-box;
+            border-radius: var(--radius);
+            border: var(--base-bw) solid rgba(31, 31, 31, 1);
+            padding: 30px;
+            margin: 15px 0;
+            background-image: radial-gradient(at top left, #1F1F1F 0%, #0E0E0E 50%);
+            overflow: visible;
+            z-index: 0;
+        }
+
+        .table-container::before {
+            content: "";
+            position: absolute;
+            inset: calc(-1 * var(--ring-w));
+            padding: var(--ring-w);
+            border-radius: calc(var(--radius) + var(--ring-w));
+            display: block;
+            background: linear-gradient(
+                to bottom,
+                rgba(117, 62, 247, 0.60) 0%,
+                rgba(168, 85, 247, 0.40) 16%,
+                rgba(168, 85, 247, 0.20) 32%,
+                rgba(168, 85, 247, 0.00) 55%
+            );
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+                    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .elementor-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            overflow: hidden;
+            min-width: 600px;
+        }
+
+        .table-container .elementor-widget-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .elementor-table th,
+        .elementor-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            font-family: var(--e-global-typography-text-font-family), Sans-serif;
+        }
+
+        .elementor-table th {
+            background: rgba(117, 62, 247, 0.1);
+            font-weight: 700;
+            color: var(--e-global-color-accent);
+        }
+
+        .elementor-table tr:last-child td {
+            border-bottom: none;
+        }`);
+
+                // Add responsive table styles
+                cssRules.push(`/* Mobile responsive improvements for tables */
+        @media (max-width: 768px) {
+            .table-container .elementor-widget-container {
+                background: 
+                    linear-gradient(90deg, rgba(0,0,0,0.3) 0%, transparent 20%), 
+                    linear-gradient(270deg, rgba(0,0,0,0.3) 0%, transparent 20%);
+                background-attachment: local, local;
+                background-size: 20px 100%, 20px 100%;
+                background-position: 0 0, 100% 0;
+                background-repeat: no-repeat;
+            }
+            
+            .elementor-table {
+                min-width: 500px;
+            }
+            
+            .elementor-table th,
+            .elementor-table td {
+                padding: 10px 12px;
+                white-space: nowrap;
+            }
+            
+            .elementor-table th {
+                font-size: 14px;
+            }
+            
+            .elementor-table td {
+                font-size: 13px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .elementor-table {
+                min-width: 400px;
+            }
+            
+            .elementor-table th,
+            .elementor-table td {
+                padding: 8px 10px;
+            }
+        }`);
+            }
+
+            // Blockquote styles
+            if (usedClasses.has('elementor-blockquote')) {
+                cssRules.push(`/* Blockquote Styles */
+        .elementor-blockquote {
+            border-left: 4px solid var(--e-global-color-e850821);
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #FFFFFF;
+            font-family: var(--e-global-typography-text-font-family), Sans-serif;
+        }`);
+            }
+
+            // Aside styles
+            if (usedClasses.has('aside-container')) {
+                cssRules.push(`/* Aside Styles */
+        .aside-container {
+            position: relative;
+            box-sizing: border-box;
+            border-radius: 25px;
+            border: 1px solid rgba(31, 31, 31, 1);
+            padding: 20px;
+            margin: 15px 0;
+            background-image: radial-gradient(at top left, #1F1F1F 0%, #0E0E0E 50%);
+            background: rgba(248, 248, 247, 0.05);
+            overflow: visible;
+        }
+
+        /* Remove margins from all elements inside aside containers */
+        .aside-container .elementor-element,
+        .aside-container .elementor-heading-title,
+        .aside-container .elementor-text-editor,
+        .aside-container .elementor-text-editor p,
+        .aside-container .bullet-list-container,
+        .aside-container .numbered-list-container,
+        .aside-container .table-container,
+        .aside-container .code-block-container,
+        .aside-container .directory-tree-container,
+        .aside-container .elementor-blockquote,
+        .aside-container .elementor-divider {
+            margin: 0 !important;
+            margin-bottom: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        /* Add small spacing between elements inside aside, but not around them */
+        .aside-container .elementor-element:not(:last-child) {
+            margin-bottom: 10px !important;
+        }`);
+            }
+
+            // Directory tree styles
+            if (usedClasses.has('directory-tree-container') || usedClasses.has('directory-tree')) {
+                cssRules.push(`/* Directory Tree Styles */
+        .directory-tree-container {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.3);
+            font-family: 'Courier New', monospace;
+        }
+
+        .directory-tree {
+            color: #FFFFFF;
+            line-height: 1.6;
+            white-space: pre;
+            font-size: 14px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .directory-tree .folder {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        .directory-tree .file {
+            color: #87CEEB;
+        }
+
+        .directory-tree .comment {
+            color: #90EE90;
+            font-style: italic;
+        }`);
+
+                // Add responsive directory tree styles
+                cssRules.push(`/* Mobile responsive improvements for directory trees */
+        @media (max-width: 768px) {
+            .directory-tree-container {
+                padding: 15px;
+            }
+            
+            .directory-tree {
+                font-size: 12px;
+                background: 
+                    linear-gradient(90deg, rgba(0,0,0,0.4) 0%, transparent 15%), 
+                    linear-gradient(270deg, rgba(0,0,0,0.4) 0%, transparent 15%);
+                background-attachment: local, local;
+                background-size: 15px 100%, 15px 100%;
+                background-position: 0 0, 100% 0;
+                background-repeat: no-repeat;
+                padding-right: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .directory-tree-container {
+                padding: 12px;
+            }
+            
+            .directory-tree {
+                font-size: 11px;
+            }
+        }`);
+            }
+
+            // Code block styles
+            if (usedClasses.has('code-block-container') || usedClasses.has('code-block-content')) {
+                cssRules.push(`/* Code Block Styles */
+        .code-block-container {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .code-block-header {
+            background: rgba(117, 62, 247, 0.2);
+            padding: 8px 15px;
+            font-family: var(--e-global-typography-text-font-family), Sans-serif;
+            font-size: 12px;
+            color: #CCCCCC;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .code-block-content {
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #FFFFFF;
+            white-space: pre;
+            overflow-x: auto;
+            background: rgba(0, 0, 0, 0.2);
+        }`);
+            }
+
+            // Numbered list styles
+            if (usedClasses.has('numbered-list-container') || usedClasses.has('elementor-numbered-list')) {
+                cssRules.push(`/* Numbered List Styles */
+        .numbered-list-container {
+            --radius: 25px;
+            --ring-w: 2.5px;
+            --base-bw: 1px;
+            position: relative;
+            box-sizing: border-box;
+            border-radius: var(--radius);
+            border: var(--base-bw) solid rgba(31, 31, 31, 1);
+            padding: 30px;
+            margin: 15px 0;
+            background-image: radial-gradient(at top left, #1F1F1F 0%, #0E0E0E 50%);
+            overflow: visible;
+            z-index: 0;
+        }
+
+        .numbered-list-container[data-columns="1"] .elementor-numbered-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .numbered-list-container[data-columns="2"] .elementor-numbered-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 20px;
+        }
+
+        .numbered-list-container[data-columns="3"] .elementor-numbered-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px 20px;
+        }
+
+        .numbered-list-container .elementor-numbered-list-item {
+            background-color: #000000;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .numbered-list-container .elementor-numbered-list-text {
+            font-size: var(--text-size, 16px);
+            line-height: 1.3em;
+        }
+
+        .numbered-list-container::before {
+            content: "";
+            position: absolute;
+            inset: calc(-1 * var(--ring-w));
+            padding: var(--ring-w);
+            border-radius: calc(var(--radius) + var(--ring-w));
+            display: block;
+            background: linear-gradient(
+                to bottom,
+                rgba(117, 62, 247, 0.60) 0%,
+                rgba(168, 85, 247, 0.40) 16%,
+                rgba(168, 85, 247, 0.20) 32%,
+                rgba(168, 85, 247, 0.00) 55%
+            );
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+                    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .elementor-numbered-list {
+            list-style: none;
+            counter-reset: item-counter;
+            padding: 0;
+            margin: 0;
+        }
+
+        .elementor-numbered-list-item {
+            counter-increment: item-counter;
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .elementor-numbered-list-item::before {
+            content: counter(item-counter);
+            background: var(--e-global-color-e850821);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            margin-right: 15px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .elementor-numbered-list-text {
+            font-family: var(--e-global-typography-text-font-family), Sans-serif;
+            font-weight: var(--e-global-typography-text-font-weight);
+            color: #FFFFFF;
+            font-size: var(--e-global-typography-text-font-size);
+            line-height: 1.3em;
+        }`);
+            }
+
+            // Horizontal rule styles
+            if (usedClasses.has('elementor-divider')) {
+                cssRules.push(`/* Horizontal Rule Styles */
+        .elementor-divider {
+            margin: 30px 0;
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, var(--e-global-color-e850821) 0%, rgba(117, 62, 247, 0.3) 100%);
+            border-radius: 2px;
+        }`);
+            }
+
+            // Inline code styles
+            if (usedClasses.has('inline-code')) {
+                cssRules.push(`/* Inline Code Styles */
+        .inline-code {
+            background-color: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #FFFFFF;
+        }`);
+            }
+
+            // Fallback for browsers without mask-composite
+            cssRules.push(`/* Fallback for browsers without mask-composite */
+        @supports not (mask-composite: exclude) {
+            .bullet-list-container::before,
+            .table-container::before,
+            .numbered-list-container::before { 
+                content: none; 
+            }
+        }`);
+
+            // Responsive column layouts
+            cssRules.push(`/* Responsive column layouts */
+        @media (max-width: 768px) {
+            .bullet-list-container[data-columns="3"] .elementor-icon-list-items,
+            .numbered-list-container[data-columns="3"] .elementor-numbered-list {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .bullet-list-container[data-columns="2"] .elementor-icon-list-items,
+            .bullet-list-container[data-columns="3"] .elementor-icon-list-items,
+            .numbered-list-container[data-columns="2"] .elementor-numbered-list,
+            .numbered-list-container[data-columns="3"] .elementor-numbered-list {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }`);
+
+            return `<style>\n        ${cssRules.join('\n\n        ')}\n        </style>`;
+        }
+
         function convertToElementorHTML() {
             const markdownInput = document.getElementById('markdownInput').value;
             const htmlOutput = document.getElementById('htmlOutput');
-            const outputSection = document.getElementById('outputSection');
+            const cssOutput = document.getElementById('cssOutput');
+            const outputsContainer = document.getElementById('outputsContainer');
             const outputButtons = document.getElementById('outputButtons');
 
             if (!markdownInput.trim()) {
@@ -1112,47 +1968,62 @@ Paste or type your content here.
             }
 
             try {
+                // Reset used classes tracking
+                usedClasses.clear();
+                usedSelectors.clear();
+                
+                // Parse markdown and track classes
                 let html = parseMarkdownToElementor(markdownInput);
                 
-                // Add the CSS
-                html = `<style>${elementorCSS}</style>\n\n` + html;
+                // Generate only necessary CSS
+                let css = extractNecessaryCSS();
                 
+                // Display HTML and CSS separately
                 htmlOutput.textContent = html;
+                cssOutput.textContent = css;
                 
                 // Store for copying
                 window.currentHTML = html;
+                window.currentCSS = css;
 
-                // Reveal output section and its controls
-                if (outputSection) outputSection.style.display = '';
+                // Reveal output container and controls
+                if (outputsContainer) outputsContainer.style.display = '';
                 if (outputButtons) outputButtons.style.display = 'flex';
                 const resetBtn = document.getElementById('resetBtn');
                 if (resetBtn) resetBtn.style.display = 'inline-block';
 
                 // Smooth scroll to output
-                outputSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                outputsContainer?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             } catch (error) {
                 htmlOutput.textContent = 'Error converting markdown: ' + error.message;
+                cssOutput.textContent = '';
             }
         }
 
         function resetOutput() {
             const htmlOutput = document.getElementById('htmlOutput');
+            const cssOutput = document.getElementById('cssOutput');
             htmlOutput.textContent = '';
+            cssOutput.textContent = '';
             window.currentHTML = '';
+            window.currentCSS = '';
             const mdInput = document.getElementById('markdownInput');
             if (mdInput) { mdInput.value = ''; mdInput.focus(); }
             const resetBtn = document.getElementById('resetBtn');
             if (resetBtn) resetBtn.style.display = 'none';
-            const outputSection = document.getElementById('outputSection');
-            if (outputSection) outputSection.style.display = 'none';
+            const outputsContainer = document.getElementById('outputsContainer');
+            if (outputsContainer) outputsContainer.style.display = 'none';
             const outputButtons = document.getElementById('outputButtons');
             if (outputButtons) outputButtons.style.display = 'none';
         }
 
         function parseInlineMarkdown(text) {
             // Parse inline code (`code`)
-            text = text.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            text = text.replace(/`([^`]+)`/g, function(match, code) {
+                usedClasses.add('inline-code');
+                return '<code class="inline-code">' + code + '</code>';
+            });
             
             // Parse bold text (**text**)
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -1191,6 +2062,8 @@ Paste or type your content here.
             let inCodeBlock = false;
             let codeBlockContent = '';
             let codeBlockLanguage = '';
+            let inAside = false;
+            let asideContent = '';
 
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
@@ -1229,6 +2102,38 @@ Paste or type your content here.
                 // If we're inside a code block, collect all content
                 if (inCodeBlock) {
                     codeBlockContent += (codeBlockContent ? '\n' : '') + lines[i]; // Use original line with whitespace
+                    continue;
+                }
+
+                // Handle aside tags (<aside> and </aside>)
+                if (line === '<aside>') {
+                    if (currentList.length > 0) {
+                        result.push(createListElement(currentList));
+                        currentList = [];
+                    }
+                    if (currentNumberedList.length > 0) {
+                        result.push(createNumberedListElement(currentNumberedList));
+                        currentNumberedList = [];
+                    }
+                    if (currentTable.length > 0) {
+                        result.push(createTableElement(currentTable));
+                        currentTable = [];
+                    }
+                    inAside = true;
+                    asideContent = '';
+                    continue;
+                } else if (line === '</aside>') {
+                    if (inAside) {
+                        result.push(createAsideElement(asideContent.trim()));
+                        inAside = false;
+                        asideContent = '';
+                    }
+                    continue;
+                }
+
+                // If we're inside an aside, collect all content
+                if (inAside) {
+                    asideContent += (asideContent ? '\n' : '') + lines[i]; // Use original line with whitespace
                     continue;
                 }
                 
@@ -1495,6 +2400,9 @@ Paste or type your content here.
             if (inCodeBlock && codeBlockContent) {
                 result.push(createCodeBlockElement(codeBlockLanguage, codeBlockContent));
             }
+            if (inAside && asideContent) {
+                result.push(createAsideElement(asideContent.trim()));
+            }
 
             return result.join('\n\n');
         }
@@ -1506,6 +2414,51 @@ Paste or type your content here.
             }
 
             navigator.clipboard.writeText(window.currentHTML).then(() => {
+                const originalText = btn.textContent;
+                const originalBackground = btn.style.background;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = originalBackground;
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy to clipboard. Please select and copy manually.');
+            });
+        }
+
+        function copyCSS(btn) {
+            if (!window.currentCSS) {
+                alert('Please convert some markdown first!');
+                return;
+            }
+
+            navigator.clipboard.writeText(window.currentCSS).then(() => {
+                const originalText = btn.textContent;
+                const originalBackground = btn.style.background;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = originalBackground;
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy to clipboard. Please select and copy manually.');
+            });
+        }
+
+        function copyBoth(btn) {
+            if (!window.currentHTML || !window.currentCSS) {
+                alert('Please convert some markdown first!');
+                return;
+            }
+
+            // Combine CSS and HTML with a newline in between
+            const combinedContent = window.currentCSS + '\n\n' + window.currentHTML;
+
+            navigator.clipboard.writeText(combinedContent).then(() => {
                 const originalText = btn.textContent;
                 const originalBackground = btn.style.background;
                 btn.textContent = 'Copied!';
